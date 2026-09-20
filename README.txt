@@ -15,3 +15,4 @@ BOT_TOKEN = токен Telegram-бота
 ADMIN_CHAT_ID = Telegram ID получателя заявок
 
 После деплоя тестовый заказ с сайта отправляется через /api/order в Telegram.
+update

@@ -1,575 +1,676 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Игровой магазин</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BOT-T — Игровой магазин</title>
 
 <style>
 *{box-sizing:border-box}
-
 :root{
-  --accent:#3478f6;
-  --bg:#f4f6f9;
-  --text:#202633;
-  --card:#ffffff;
-  --radius:15px;
+  --accent:#6c5ce7;
+  --accent2:#8b7cf6;
+  --dark:#101116;
+  --text:#17181d;
+  --muted:#777b87;
+  --bg:#f5f6fa;
+  --card:#fff;
+  --border:#e7e8ee;
+  --radius:18px;
 }
 
+html{scroll-behavior:smooth}
 body{
   margin:0;
+  font-family:Inter,Arial,sans-serif;
   background:var(--bg);
   color:var(--text);
-  font-family:Arial,sans-serif;
 }
-
-button,input,textarea,select{
-  font-family:inherit;
-}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
 
 .header{
   position:sticky;
   top:0;
-  z-index:5;
-  background:#fff;
-  border-bottom:1px solid #e5e8ee;
-  padding:14px 18px;
+  z-index:50;
+  height:72px;
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
+  padding:0 34px;
 }
 
 .logo{
-  font-size:21px;
+  font-size:25px;
   font-weight:900;
-  color:#2580c8;
+  letter-spacing:-1px;
   cursor:pointer;
   user-select:none;
 }
+.logo span{color:var(--accent)}
 
-.logo span{
-  color:#333;
-}
-
-.cart{
+.cart-btn{
   border:0;
-  background:var(--accent);
+  background:#17181d;
   color:#fff;
-  border-radius:11px;
-  padding:10px 14px;
-  font-weight:800;
-  cursor:pointer;
-}
-
-.wrap{
-  max-width:1100px;
-  margin:auto;
-  padding:18px 14px 50px;
+  padding:12px 18px;
+  border-radius:13px;
+  font-weight:700;
 }
 
 .hero{
-  background:linear-gradient(135deg,#172033,#2c3c60);
-  color:white;
-  border-radius:20px;
-  padding:25px;
-  margin-bottom:18px;
+  max-width:1250px;
+  margin:28px auto;
+  padding:70px 65px;
+  border-radius:30px;
+  color:#fff;
+  overflow:hidden;
+  position:relative;
+  background:
+    radial-gradient(circle at 85% 20%,rgba(139,124,246,.65),transparent 32%),
+    radial-gradient(circle at 20% 100%,rgba(55,44,160,.7),transparent 38%),
+    linear-gradient(135deg,#11121a,#28213e);
 }
 
 .hero h1{
-  margin:0 0 7px;
-  font-size:34px;
+  font-size:58px;
+  max-width:700px;
+  line-height:1;
+  margin:0 0 20px;
+  letter-spacing:-3px;
+}
+.hero p{
+  max-width:580px;
+  font-size:19px;
+  color:#d8d7e0;
+  line-height:1.6;
+  margin:0 0 30px;
+}
+.hero-btn{
+  display:inline-flex;
+  padding:15px 22px;
+  border-radius:14px;
+  background:#fff;
+  color:#17181d;
+  font-weight:800;
+  border:0;
 }
 
-.hero p{
-  margin:0;
-  color:#d4dceb;
+.container{
+  max-width:1250px;
+  margin:auto;
+  padding:0 20px 80px;
 }
 
 .tabs{
   display:flex;
-  gap:8px;
-  overflow:auto;
-  margin-bottom:20px;
+  gap:10px;
+  margin:30px 0;
+  flex-wrap:wrap;
 }
-
 .tab{
-  white-space:nowrap;
-  border:1px solid #e2e6ed;
+  border:1px solid var(--border);
   background:#fff;
-  border-radius:11px;
-  padding:10px 14px;
+  padding:11px 18px;
+  border-radius:12px;
   font-weight:700;
-  color:#626c7f;
-  cursor:pointer;
 }
-
 .tab.active{
   background:var(--accent);
   color:#fff;
   border-color:var(--accent);
 }
 
-.section{
-  margin:25px 0;
-}
-
-.title{
-  font-size:23px;
-  font-weight:900;
-  margin:0 0 12px;
-}
-
-.grid{
+.products{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:11px;
+  gap:18px;
 }
 
-.card{
-  background:var(--card);
-  border:1px solid #e3e7ed;
-  border-radius:var(--radius);
-  padding:15px;
-  display:flex;
-  flex-direction:column;
-  min-height:175px;
-}
-
-.icon{
-  font-size:27px;
-  margin-bottom:10px;
-}
-
-.card h3{
-  font-size:15px;
-  line-height:1.25;
-  margin:0 0 5px;
-}
-
-.desc{
-  font-size:12px;
-  color:#7c8595;
-  margin-top:auto;
-}
-
-.price{
-  font-size:20px;
-  font-weight:900;
-  margin:12px 0 9px;
-}
-
-.buy{
-  border:0;
-  border-radius:10px;
-  padding:10px;
-  background:var(--accent);
-  color:#fff;
-  font-weight:800;
-  cursor:pointer;
-}
-
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:50;
-  background:#0009;
-  backdrop-filter:blur(5px);
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-}
-
-.modal.show{
-  display:flex;
-}
-
-.box{
-  width:min(430px,100%);
+.product{
   background:#fff;
-  border-radius:20px;
-  padding:23px;
-  box-shadow:0 25px 70px #0008;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:20px;
+  transition:.2s;
 }
-
-.top{
-  display:flex;
-  justify-content:space-between;
-  gap:15px;
+.product:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 30px rgba(0,0,0,.07);
 }
-
-.close{
-  border:0;
-  background:#eef1f5;
-  border-radius:9px;
-  width:36px;
-  height:36px;
-  font-size:20px;
-  cursor:pointer;
-}
-
-.box h2{
-  margin:0 0 5px;
-}
-
-.selected{
-  font-size:13px;
-  color:#778196;
-  margin-bottom:18px;
-}
-
-.field{
-  margin:11px 0;
-}
-
-.field label{
-  display:block;
-  font-size:11px;
+.product-game{
+  color:var(--accent);
+  font-size:12px;
   font-weight:800;
-  color:#697387;
-  margin-bottom:5px;
   text-transform:uppercase;
 }
+.product h3{
+  margin:9px 0;
+  font-size:17px;
+}
+.product-price{
+  font-size:22px;
+  font-weight:900;
+  margin:15px 0;
+}
+.buy{
+  width:100%;
+  border:0;
+  background:#17181d;
+  color:#fff;
+  padding:12px;
+  border-radius:12px;
+  font-weight:800;
+}
 
+.footer{
+  padding:45px 20px;
+  text-align:center;
+  color:#858894;
+  border-top:1px solid var(--border);
+  background:#fff;
+}
+
+/* MODAL */
+
+.modal-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(8px);
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.modal-bg.show{display:flex}
+
+.modal{
+  width:100%;
+  max-width:460px;
+  background:#fff;
+  border-radius:24px;
+  padding:28px;
+}
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.close{
+  border:0;
+  background:#f1f2f5;
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  font-size:20px;
+}
+.field{
+  margin-top:18px;
+}
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:7px;
+}
 .field input{
   width:100%;
-  padding:13px;
-  border:1px solid #dce1e9;
-  border-radius:10px;
-  outline:none;
-  font-size:15px;
-}
-
-.submit,.ok{
-  width:100%;
-  border:0;
-  border-radius:11px;
-  padding:13px;
-  background:#ff713b;
-  color:#fff;
-  font-weight:900;
-  margin-top:8px;
-  cursor:pointer;
-}
-
-.success{
-  text-align:center;
-  padding:8px;
-}
-
-.check{
-  width:65px;
-  height:65px;
-  margin:0 auto 14px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:#e8faef;
-  color:#22ad70;
-  font-size:34px;
-  font-weight:900;
-}
-
-.success p{
-  color:#778196;
-  line-height:1.5;
-}
-
-.ok{
-  background:var(--accent);
-}
-
-.admin-list{
-  margin-top:12px;
-  max-height:55vh;
-  overflow:auto;
-}
-
-.order-item{
-  border:1px solid #e2e6ed;
+  border:1px solid var(--border);
   border-radius:12px;
-  padding:12px;
-  margin:9px 0;
-  background:#f8fafc;
+  padding:13px;
+  outline:none;
 }
-
-.order-item strong{
-  display:block;
-  font-size:14px;
-  margin-bottom:5px;
-}
-
-.order-item span{
-  display:block;
-  font-size:12px;
-  color:#687386;
-  margin:3px 0;
-}
-
-.empty-orders{
-  text-align:center;
-  color:#7c8595;
-  padding:25px 10px;
-}
-
-.admin-actions{
-  display:flex;
-  gap:8px;
-  margin-top:15px;
-}
-
-.admin-actions button{
-  flex:1;
+.submit{
+  width:100%;
+  margin-top:22px;
+  padding:14px;
   border:0;
-  border-radius:10px;
-  padding:11px;
+  border-radius:13px;
+  background:var(--accent);
+  color:#fff;
   font-weight:800;
-  cursor:pointer;
-  background:#eef1f5;
-}
-
-.admin-actions .danger{
-  background:#ffe9e9;
-  color:#c33;
 }
 
 /* =========================
-   КОНСТРУКТОР
+   BUILDER
 ========================= */
 
-#editor{
-  display:none;
+.builder{
   position:fixed;
   inset:0;
   z-index:1000;
-  background:#eef1f5;
+  background:#eef0f4;
+  display:none;
+  grid-template-rows:62px 1fr;
+}
+.builder.open{display:grid}
+
+.builder-top{
+  background:#17181d;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  border-bottom:1px solid #2d2f38;
 }
 
-#editor.show{
+.builder-brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:900;
+}
+.builder-brand-mark{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  background:var(--accent);
+  border-radius:10px;
+}
+
+.builder-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.btop-btn{
+  border:1px solid #343640;
+  background:#23252d;
+  color:#fff;
+  border-radius:9px;
+  padding:9px 13px;
+}
+.btop-btn.primary{
+  background:var(--accent);
+  border-color:var(--accent);
+}
+
+.builder-body{
+  min-height:0;
+  display:grid;
+  grid-template-columns:250px minmax(500px,1fr) 300px;
+}
+
+.left-panel,
+.right-panel{
+  background:#fff;
+  overflow:auto;
+}
+
+.left-panel{
+  border-right:1px solid #dddfe6;
+  padding:18px;
+}
+
+.right-panel{
+  border-left:1px solid #dddfe6;
+}
+
+.panel-title{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:#858894;
+  margin:4px 0 14px;
+}
+
+.block-list{
+  display:grid;
+  gap:9px;
+}
+
+.block-item{
+  border:1px solid #e2e4ea;
+  border-radius:13px;
+  padding:13px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  transition:.15s;
+  cursor:grab;
+}
+.block-item:hover{
+  border-color:var(--accent);
+  background:#faf9ff;
+}
+.block-icon{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  background:#f0efff;
+  border-radius:9px;
+}
+
+.canvas-area{
+  overflow:auto;
+  padding:35px;
+  background:
+    linear-gradient(45deg,#e7e8ed 25%,transparent 25%),
+    linear-gradient(-45deg,#e7e8ed 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,#e7e8ed 75%),
+    linear-gradient(-45deg,transparent 75%,#e7e8ed 75%);
+  background-size:20px 20px;
+  background-position:0 0,0 10px,10px -10px,-10px 0;
+}
+
+.canvas-wrap{
+  width:100%;
+  max-width:1100px;
+  min-height:900px;
+  margin:auto;
+  background:#fff;
+  box-shadow:0 20px 70px rgba(0,0,0,.14);
+  transition:.2s;
+}
+
+.canvas-wrap.mobile{
+  max-width:390px;
+}
+
+.canvas-inner{
+  min-height:900px;
+}
+
+.builder-block{
+  position:relative;
+  outline:2px solid transparent;
+  outline-offset:-2px;
+  transition:.12s;
+}
+.builder-block:hover{
+  outline:2px solid rgba(108,92,231,.3);
+}
+.builder-block.selected{
+  outline:2px solid var(--accent);
+}
+.block-toolbar{
+  position:absolute;
+  top:8px;
+  right:8px;
+  display:none;
+  z-index:10;
+  gap:5px;
+}
+.builder-block.selected .block-toolbar{
   display:flex;
 }
-
-.editor-sidebar{
-  width:250px;
-  background:#171b24;
-  color:white;
-  padding:18px;
-  overflow:auto;
-  flex-shrink:0;
-}
-
-.editor-sidebar h2{
-  margin:0 0 5px;
-  font-size:20px;
-}
-
-.editor-sidebar .sub{
-  color:#8992a5;
-  font-size:12px;
-  margin-bottom:20px;
-}
-
-.tool-title{
-  font-size:11px;
-  color:#858fa3;
-  font-weight:800;
-  text-transform:uppercase;
-  margin:20px 0 8px;
-}
-
-.tool{
-  width:100%;
+.block-toolbar button{
   border:0;
-  border-radius:9px;
-  background:#252b38;
-  color:white;
-  padding:11px;
-  text-align:left;
-  margin-bottom:7px;
-  cursor:pointer;
+  background:#17181d;
+  color:#fff;
+  border-radius:7px;
+  width:28px;
+  height:28px;
 }
 
-.tool:hover{
-  background:#303848;
+.block-content{
+  min-height:40px;
 }
 
-.editor-center{
-  flex:1;
-  min-width:0;
-  overflow:auto;
-  padding:25px;
-}
+/* builder block styles */
 
-.editor-page{
-  max-width:900px;
-  min-height:100%;
-  margin:auto;
-  background:white;
-  box-shadow:0 10px 40px #0002;
-  padding:18px;
+.b-hero{
+  padding:80px 55px;
+  color:#fff;
+  background:
+    radial-gradient(circle at 80% 20%,rgba(139,124,246,.7),transparent 35%),
+    linear-gradient(135deg,#11121a,#2b2146);
 }
-
-.editor-page .editor-element{
-  position:relative;
-  border:2px dashed transparent;
-  transition:.15s;
+.b-hero h1{
+  margin:0 0 16px;
+  font-size:52px;
+  line-height:1;
+  letter-spacing:-2px;
 }
-
-.editor-page .editor-element:hover{
-  border-color:#3478f6;
+.b-hero p{
+  margin:0;
+  color:#dddbe6;
+  max-width:600px;
+  font-size:18px;
+  line-height:1.6;
 }
-
-.editor-page .editor-element.selected{
-  border:2px solid #3478f6;
+.b-heading{
+  padding:35px 45px 15px;
 }
-
-.drag-handle{
-  position:absolute;
-  left:5px;
-  top:5px;
-  z-index:20;
-  background:#3478f6;
-  color:white;
-  border-radius:6px;
-  padding:4px 7px;
-  font-size:11px;
-  cursor:grab;
-  opacity:0;
+.b-heading h2{
+  margin:0;
+  font-size:34px;
 }
-
-.editor-element:hover .drag-handle,
-.editor-element.selected .drag-handle{
-  opacity:1;
+.b-text{
+  padding:15px 45px 35px;
+  color:#666a75;
+  line-height:1.7;
 }
-
-.custom-block{
-  padding:30px;
-  text-align:center;
-  border:2px dashed #d9deea;
-  border-radius:14px;
-  margin:12px 0;
-  color:#667085;
+.b-button{
+  padding:25px 45px;
 }
-
-.editor-right{
-  width:290px;
-  background:#fff;
-  border-left:1px solid #dfe3ea;
-  padding:18px;
-  overflow:auto;
-  flex-shrink:0;
-}
-
-.editor-right h3{
-  margin:0 0 18px;
-}
-
-.property{
-  margin-bottom:15px;
-}
-
-.property label{
-  display:block;
-  font-size:11px;
+.b-button a{
+  display:inline-block;
+  text-decoration:none;
+  padding:13px 21px;
+  border-radius:12px;
+  background:var(--accent);
+  color:#fff;
   font-weight:800;
-  color:#697387;
-  margin-bottom:6px;
-  text-transform:uppercase;
 }
-
-.property input,
-.property textarea,
-.property select{
+.b-image{
+  padding:25px 45px;
+}
+.b-image img{
+  display:block;
   width:100%;
-  border:1px solid #dce1e9;
-  border-radius:8px;
-  padding:9px;
-  outline:none;
-  background:white;
+  max-height:450px;
+  object-fit:cover;
+  border-radius:18px;
+}
+.b-spacer{
+  height:80px;
+}
+.b-banner{
+  margin:25px 45px;
+  padding:25px;
+  border-radius:18px;
+  background:#f0efff;
+  color:#302b64;
+  font-weight:800;
 }
 
-.property textarea{
-  min-height:80px;
+/* catalog in builder */
+.b-catalog{
+  padding:35px 45px;
+}
+.b-catalog-head{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:18px;
+}
+.b-catalog-head h2{
+  margin:0;
+  font-size:30px;
+}
+.b-catalog-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.b-mini-product{
+  padding:15px;
+  border:1px solid #e7e8ee;
+  border-radius:14px;
+}
+.b-mini-product strong{
+  display:block;
+  margin-bottom:8px;
+}
+.b-mini-price{
+  font-weight:900;
+}
+
+/* property editor */
+
+.property-empty{
+  padding:28px 20px;
+  color:#888b96;
+  text-align:center;
+  line-height:1.6;
+}
+
+.property-content{
+  padding:18px;
+}
+
+.prop-section{
+  margin-bottom:22px;
+}
+.prop-title{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-weight:900;
+  color:#858894;
+  margin-bottom:9px;
+}
+
+.prop-input,
+.prop-select{
+  width:100%;
+  padding:10px 11px;
+  border:1px solid #dddfe6;
+  border-radius:9px;
+  outline:none;
+  background:#fff;
+}
+
+.prop-textarea{
+  min-height:100px;
   resize:vertical;
+}
+
+.two{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
 }
 
 .color-row{
   display:flex;
-  gap:7px;
-}
-
-.color-row input[type=color]{
-  width:45px;
-  height:38px;
-  padding:2px;
-}
-
-.editor-top{
-  position:fixed;
-  top:0;
-  left:250px;
-  right:290px;
-  height:60px;
-  background:white;
-  border-bottom:1px solid #dfe3ea;
-  z-index:30;
-  display:flex;
   align-items:center;
-  justify-content:center;
-  gap:8px;
+  gap:9px;
 }
-
-.editor-top button{
+.color-row input[type=color]{
+  width:42px;
+  height:38px;
   border:0;
-  border-radius:9px;
-  padding:9px 14px;
-  font-weight:800;
-  cursor:pointer;
+  padding:0;
+  background:none;
 }
 
-.save-design{
-  background:#3478f6;
-  color:white;
+.range-row{
+  display:grid;
+  grid-template-columns:1fr 48px;
+  gap:8px;
+  align-items:center;
 }
+.range-row input[type=range]{width:100%}
 
-.exit-editor{
-  background:#eef1f5;
-}
-
-.editor-center{
-  padding-top:85px;
-}
-
-.delete-element{
+.danger{
   width:100%;
   border:0;
-  border-radius:9px;
+  background:#fff0f0;
+  color:#d32f2f;
   padding:11px;
-  background:#ffe9e9;
-  color:#c33;
+  border-radius:10px;
   font-weight:800;
-  cursor:pointer;
 }
 
-@media(max-width:900px){
-  .editor-sidebar{width:190px}
-  .editor-right{width:240px}
-  .editor-top{left:190px;right:240px}
-  .grid{grid-template-columns:repeat(2,1fr)}
+.canvas-drop{
+  height:10px;
+  transition:.2s;
+}
+.canvas-drop.active{
+  height:50px;
+  background:#eeeaff;
+  border:2px dashed var(--accent);
+  border-radius:10px;
+  margin:5px 10px;
 }
 
-@media(max-width:650px){
-  .editor-sidebar{display:none}
-  .editor-right{width:240px}
-  .editor-top{left:0;right:240px}
+.toast{
+  position:fixed;
+  right:22px;
+  bottom:22px;
+  z-index:3000;
+  background:#17181d;
+  color:#fff;
+  padding:13px 18px;
+  border-radius:12px;
+  opacity:0;
+  transform:translateY(10px);
+  pointer-events:none;
+  transition:.2s;
+}
+.toast.show{
+  opacity:1;
+  transform:none;
 }
 
-@media(max-width:480px){
-  .hero h1{font-size:27px}
-  .grid{gap:8px}
-  .card{padding:12px;min-height:165px}
-  .card h3{font-size:14px}
-  .price{font-size:18px}
+.preview-mode .builder-top,
+.preview-mode .left-panel,
+.preview-mode .right-panel{
+  display:none;
+}
+.preview-mode .builder-body{
+  display:block;
+}
+.preview-mode .canvas-area{
+  padding:0;
+  background:#fff;
+}
+.preview-mode .canvas-wrap{
+  max-width:none;
+  box-shadow:none;
+}
+.preview-mode .builder-block{
+  outline:none!important;
+}
+.preview-mode .block-toolbar{
+  display:none!important;
+}
+
+@media(max-width:1000px){
+  .builder-body{
+    grid-template-columns:210px 1fr 260px;
+  }
+  .products{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:750px){
+  .header{padding:0 16px}
+  .hero{margin:15px;padding:45px 25px;border-radius:22px}
+  .hero h1{font-size:40px}
+  .products{grid-template-columns:1fr}
+  .builder-body{
+    grid-template-columns:1fr;
+  }
+  .left-panel,.right-panel{
+    display:none;
+  }
+  .canvas-area{padding:12px}
 }
 </style>
 </head>
@@ -577,1499 +678,1283 @@ button,input,textarea,select{
 <body>
 
 <header class="header">
-  <div class="logo" id="adminLogo">BOT<span>-T</span></div>
-  <button class="cart" id="cart">🛒 Заказ</button>
+  <div class="logo" id="logo">BOT<span>-T</span></div>
+  <button class="cart-btn" onclick="scrollToCatalog()">🛒 Каталог</button>
 </header>
 
-<main class="wrap">
-
-<section class="hero editor-element" data-editor-id="hero">
-  <div class="drag-handle">↕ Перетащить</div>
-  <h1>Игровой магазин</h1>
-  <p>Выберите игру и товар — оформите заказ за несколько секунд.</p>
+<section class="hero">
+  <h1>Игры.<br>Быстро. Выгодно.</h1>
+  <p>
+    Пополнение игр, игровые валюты и пропуски.
+    Выбирай товар и оформляй заказ за пару минут.
+  </p>
+  <button class="hero-btn" onclick="scrollToCatalog()">Смотреть товары</button>
 </section>
 
-<div class="tabs editor-element" id="tabs" data-editor-id="tabs">
-  <div class="drag-handle">↕ Перетащить</div>
-</div>
-
-<div id="catalog" class="editor-element" data-editor-id="catalog">
-  <div class="drag-handle">↕ Перетащить</div>
-</div>
-
-<div id="customBlocks"></div>
-
+<main class="container" id="catalog">
+  <div class="tabs" id="tabs"></div>
+  <div class="products" id="products"></div>
 </main>
 
-<!-- Заказ -->
+<footer class="footer">
+  BOT-T © 2026 · Игровой магазин
+</footer>
 
-<div class="modal" id="modal">
-  <div class="box" id="box"></div>
+<!-- ORDER MODAL -->
+<div class="modal-bg" id="orderModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div style="font-size:12px;color:#777;font-weight:800">ОФОРМЛЕНИЕ</div>
+        <h2 id="orderTitle" style="margin:4px 0 0">Заказ</h2>
+      </div>
+      <button class="close" onclick="closeOrder()">×</button>
+    </div>
+
+    <div class="field">
+      <label>Имя</label>
+      <input id="customerName" placeholder="Как к вам обращаться?">
+    </div>
+
+    <div class="field">
+      <label>Telegram</label>
+      <input id="customerTelegram" placeholder="@username">
+    </div>
+
+    <button class="submit" onclick="submitOrder(event)">
+      Отправить заказ
+    </button>
+  </div>
 </div>
 
-<!-- Админка -->
+<!-- BUILDER -->
+<div class="builder" id="builder">
 
-<div class="modal" id="adminModal">
+  <div class="builder-top">
+    <div class="builder-brand">
+      <div class="builder-brand-mark">B</div>
+      <div>BOT-T <span style="font-weight:500;color:#9295a1">/ Конструктор</span></div>
+    </div>
 
-<div class="box">
+    <div class="builder-actions">
+      <button class="btop-btn" onclick="undo()">↶</button>
+      <button class="btop-btn" onclick="redo()">↷</button>
+      <button class="btop-btn" onclick="toggleDevice()">📱 <span id="deviceText">ПК</span></button>
+      <button class="btop-btn" onclick="togglePreview()">👁 Предпросмотр</button>
+      <button class="btop-btn primary" onclick="saveBuilder()">Сохранить</button>
+      <button class="btop-btn" onclick="closeBuilder()">✕</button>
+    </div>
+  </div>
 
-<div class="top">
+  <div class="builder-body">
 
-<div>
-<h2>📋 Заявки</h2>
-<div class="selected">Список заказов на этом устройстве</div>
+    <!-- LEFT -->
+    <aside class="left-panel">
+      <div class="panel-title">Блоки</div>
+
+      <div class="block-list">
+
+        <div class="block-item" draggable="true" data-new="hero">
+          <div class="block-icon">✨</div>
+          <div>
+            <strong>Главный экран</strong>
+            <div style="font-size:11px;color:#888">Hero-блок</div>
+          </div>
+        </div>
+
+        <div class="block-item" draggable="true" data-new="heading">
+          <div class="block-icon">T</div>
+          <div>
+            <strong>Заголовок</strong>
+            <div style="font-size:11px;color:#888">Большой текст</div>
+          </div>
+        </div>
+
+        <div class="block-item" draggable="true" data-new="text">
+          <div class="block-icon">≡</div>
+          <div>
+            <strong>Текст</strong>
+            <div style="font-size:11px;color:#888">Описание</div>
+          </div>
+        </div>
+
+        <div class="block-item" draggable="true" data-new="button">
+          <div class="block-icon">▣</div>
+          <div>
+            <strong>Кнопка</strong>
+            <div style="font-size:11px;color:#888">CTA</div>
+          </div>
+        </div>
+
+        <div class="block-item" draggable="true" data-new="image">
+          <div class="block-icon">▧</div>
+          <div>
+            <strong>Изображение</strong>
+            <div style="font-size:11px;color:#888">По URL</div>
+          </div>
+        </div>
+
+        <div class="block-item" draggable="true" data-new="banner">
+          <div class="block-icon">▰</div>
+          <div>
+            <strong>Баннер</strong>
+            <div style="font-size:11px;color:#888">Акция / уведомление</div>
+          </div>
+        </div>
+
+        <div class="block-item" draggable="true" data-new="spacer">
+          <div class="block-icon">↕</div>
+          <div>
+            <strong>Отступ</strong>
+            <div style="font-size:11px;color:#888">Пустое место</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="height:1px;background:#eee;margin:22px 0"></div>
+
+      <div class="panel-title">Структура</div>
+
+      <div style="font-size:12px;color:#777;line-height:1.6">
+        Перетаскивай блоки в центральную область.
+        Нажми на блок, чтобы открыть его настройки справа.
+      </div>
+    </aside>
+
+    <!-- CANVAS -->
+    <section class="canvas-area">
+      <div class="canvas-wrap" id="canvasWrap">
+        <div class="canvas-inner" id="builderCanvas"></div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <aside class="right-panel" id="properties"></aside>
+
+  </div>
 </div>
 
-<button class="close" id="adminClose">×</button>
-
-</div>
-
-<div id="ordersList" class="admin-list"></div>
-
-<div class="admin-actions">
-<button id="refreshOrders">Обновить</button>
-<button class="danger" id="clearOrders">Очистить</button>
-</div>
-
-</div>
-
-</div>
-
-<!-- =========================
-     КОНСТРУКТОР
-========================= -->
-
-<div id="editor">
-
-<div class="editor-sidebar">
-
-<h2>🎨 BOT-T</h2>
-<div class="sub">Конструктор сайта</div>
-
-<div class="tool-title">Добавить блок</div>
-
-<button class="tool" onclick="addBlock('text')">
-📝 Текст
-</button>
-
-<button class="tool" onclick="addBlock('title')">
-🔤 Заголовок
-</button>
-
-<button class="tool" onclick="addBlock('button')">
-🔘 Кнопка
-</button>
-
-<button class="tool" onclick="addBlock('image')">
-🖼️ Изображение
-</button>
-
-<button class="tool" onclick="addBlock('space')">
-↕️ Отступ
-</button>
-
-<div class="tool-title">Страница</div>
-
-<button class="tool" onclick="selectEditorElement('hero')">
-🏠 Главный экран
-</button>
-
-<button class="tool" onclick="selectEditorElement('tabs')">
-🎮 Категории
-</button>
-
-<button class="tool" onclick="selectEditorElement('catalog')">
-🛒 Товары
-</button>
-
-</div>
-
-
-<div class="editor-center">
-
-<div class="editor-top">
-
-<button class="save-design" onclick="saveDesign()">
-💾 Сохранить
-</button>
-
-<button class="exit-editor" onclick="closeEditor()">
-Выйти
-</button>
-
-</div>
-
-
-<div class="editor-page" id="editorPage">
-
-<div id="editorHero"></div>
-<div id="editorTabs"></div>
-<div id="editorCatalog"></div>
-<div id="editorCustom"></div>
-
-</div>
-
-</div>
-
-
-<div class="editor-right">
-
-<h3>⚙️ Настройки</h3>
-
-<div id="properties">
-
-<div style="color:#7c8595;font-size:13px">
-Выберите элемент на странице.
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<div class="toast" id="toast"></div>
 
 <script>
+/* =========================================================
+   CATALOG
+========================================================= */
 
-/* =========================
-   ТОВАРЫ
-========================= */
+const catalog = {
+  "Brawl Stars":[
+    ["Brawl Pass",649],
+    ["Brawl Pass Plus",899],
+    ["Brawl Pass (особая акция)",349],
+    ["Upgrade",449],
+    ["30 гемов",229],
+    ["80 гемов",499],
+    ["170 гемов",949],
+    ["360 гемов",1749],
+    ["950 гемов",4199],
+    ["2000 гемов",7999],
+    ["Early Access Lumi",2049],
+    ["5000 bling",249],
+    ["10000 bling",519],
+    ["Pro Pass",2099]
+  ],
+  "Clash Royale":[
+    ["80 гемов",149],
+    ["500 гемов",549],
+    ["1200 гемов",1090],
+    ["2500 гемов",2049],
+    ["6500 гемов",4799],
+    ["14000 гемов",9799],
+    ["Diamond Pass",1249]
+  ],
+  "PUBG Mobile":[
+    ["60 UC",110],
+    ["120 UC",220],
+    ["180 UC",300],
+    ["325 UC",470],
+    ["385 UC",565],
+    ["660 UC",870],
+    ["720 UC",965],
+    ["985 UC",1340],
+    ["1045 UC",1435],
+    ["1320 UC",1740],
+    ["1800 UC",2300],
+    ["1920 UC",2480],
+    ["3850 UC",4450],
+    ["8100 UC",8500],
+    ["16200 UC",17000],
+    ["32400 UC",34000]
+  ]
+};
 
-const data = [
+let currentGame = Object.keys(catalog)[0];
 
-{
-g:"Brawl Stars",
-i:"⭐",
-p:[
-["Brawl Pass",649],
-["Brawl Pass Plus",899],
-["Brawl Pass (особая акция)",349],
-["Улучшение до Brawl Pass Plus",449],
-["30 гемов",229],
-["80 гемов",499],
-["170 гемов",949],
-["360 гемов",1749],
-["950 гемов",4199],
-["2000 гемов",7999],
-["Ранний доступ Луми",2049],
-["5000 блингoв",249],
-["10000 блингoв",519],
-["Pro Pass",2099]
-]
-},
+function renderTabs(){
+  const tabs=document.getElementById("tabs");
 
-{
-g:"Clash Royale",
-i:"👑",
-p:[
-["80 гемов",149],
-["500 гемов",549],
-["1200 гемов",1090],
-["2500 гемов",2049],
-["6500 гемов",4799],
-["14000 гемов",9799],
-["Алмазный пропуск",1249]
-]
-},
-
-{
-g:"PUBG Mobile",
-i:"🎮",
-p:[
-["60 UC",110],
-["120 UC",220],
-["180 UC",300],
-["325 UC",470],
-["385 UC",565],
-["660 UC",870],
-["720 UC",965],
-["985 UC",1340],
-["1045 UC",1435],
-["1320 UC",1740],
-["1800 UC",2300],
-["1920 UC",2480],
-["3850 UC",4450],
-["8100 UC",8500],
-["16200 UC",17000],
-["32400 UC",34000]
-]
+  tabs.innerHTML=Object.keys(catalog).map(game=>`
+    <button class="tab ${game===currentGame?'active':''}"
+      onclick="selectGame('${game.replace(/'/g,"\\'")}')">
+      ${game}
+    </button>
+  `).join("");
 }
 
-];
+function renderProducts(){
+  const box=document.getElementById("products");
 
-let filter="Все";
-let selected=null;
-
-
-/* =========================
-   КАТАЛОГ
-========================= */
-
-const tabs=document.getElementById("tabs");
-const cat=document.getElementById("catalog");
-const modal=document.getElementById("modal");
-
-const money=x =>
-x==null
-? "Цена уточняется"
-: x.toLocaleString("ru-RU")+" ₽";
-
-
-function render(){
-
-tabs.innerHTML=
-`
-<div class="drag-handle">↕ Перетащить</div>
-`
-+
-["Все",...data.map(x=>x.g)]
-.map(x=>`
-<button
-class="tab ${x==filter?"active":""}"
-onclick='setFilter(${JSON.stringify(x)})'
->
-${x}
-</button>
-`)
-.join("");
-
-
-const arr=
-filter=="Все"
-?data
-:data.filter(x=>x.g==filter);
-
-
-cat.innerHTML=
-`
-<div class="drag-handle">↕ Перетащить</div>
-`
-+
-arr.map(x=>`
-
-<section class="section">
-
-<h2 class="title">
-${x.i} ${x.g}
-</h2>
-
-<div class="grid">
-
-${x.p.map(p=>`
-
-<article class="card">
-
-<div class="icon">${x.i}</div>
-
-<h3>${p[0]}</h3>
-
-<div class="desc">
-Моментальное оформление
-</div>
-
-<div class="price">
-${money(p[1])}
-</div>
-
-<button
-class="buy"
-onclick='order(${JSON.stringify(x.g)},${JSON.stringify(p[0])},${p[1]===null?"null":p[1]})'
->
-Заказать
-</button>
-
-</article>
-
-`).join("")}
-
-</div>
-
-</section>
-
-`).join("");
-
+  box.innerHTML=catalog[currentGame].map(([name,price])=>`
+    <div class="product">
+      <div class="product-game">${currentGame}</div>
+      <h3>${escapeHtml(name)}</h3>
+      <div class="product-price">${price.toLocaleString("ru-RU")} ₽</div>
+      <button class="buy"
+        onclick="openOrder('${currentGame.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}','${price}')">
+        Купить
+      </button>
+    </div>
+  `).join("");
 }
 
-
-/* =========================
-   ФИЛЬТР
-========================= */
-
-function setFilter(x){
-
-filter=x;
-
-render();
-
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
-
+function selectGame(game){
+  currentGame=game;
+  renderTabs();
+  renderProducts();
 }
 
-
-/* =========================
-   ЗАКАЗ
-========================= */
-
-function order(g,p,price){
-
-selected={g,p,price};
-
-modal.classList.add("show");
-
-document.getElementById("box").innerHTML=`
-
-<div class="top">
-
-<div>
-
-<h2>Оформление заказа</h2>
-
-<div class="selected">
-${g} • ${p} • ${money(price)}
-</div>
-
-</div>
-
-<button
-class="close"
-onclick="closeModal()"
->
-×
-</button>
-
-</div>
-
-<form id="form">
-
-<div class="field">
-
-<label>Ваше имя</label>
-
-<input
-id="name"
-required
-placeholder="Иван"
->
-
-</div>
-
-<div class="field">
-
-<label>Telegram</label>
-
-<input
-id="tg"
-required
-placeholder="@username"
->
-
-</div>
-
-<button
-class="submit"
-type="submit"
->
-Оформить заказ
-</button>
-
-</form>
-
-`;
-
-document.getElementById("form").onsubmit=submitOrder;
-
-setTimeout(()=>{
-
-const nameInput=document.getElementById("name");
-
-if(nameInput){
-nameInput.focus();
+function scrollToCatalog(){
+  document.getElementById("catalog").scrollIntoView({behavior:"smooth"});
 }
 
-},50);
+/* =========================================================
+   ORDER
+========================================================= */
 
+let selectedOrder=null;
+
+function openOrder(game,product,price){
+  selectedOrder={game,product,price};
+
+  document.getElementById("orderTitle").textContent=
+    `${product} — ${Number(price).toLocaleString("ru-RU")} ₽`;
+
+  document.getElementById("orderModal").classList.add("show");
 }
 
-
-/* =========================
-   ОТПРАВКА TELEGRAM
-========================= */
+function closeOrder(){
+  document.getElementById("orderModal").classList.remove("show");
+}
 
 async function submitOrder(e){
+  e.preventDefault();
 
-e.preventDefault();
+  if(!selectedOrder) return;
 
-const name=
-document.getElementById("name").value.trim();
+  const name=document.getElementById("customerName").value.trim();
+  const telegram=document.getElementById("customerTelegram").value.trim();
 
-const tg=
-document.getElementById("tg").value.trim();
+  if(!name || !telegram){
+    alert("Заполни имя и Telegram.");
+    return;
+  }
 
-if(!name||!tg){
+  const button=e.currentTarget;
+  const oldText=button.textContent;
 
-alert("Заполните все поля.");
+  button.disabled=true;
+  button.textContent="Отправляем...";
 
-return;
+  try{
+    const response=await fetch("/api/order",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        game:selectedOrder.game,
+        product:selectedOrder.product,
+        price:selectedOrder.price,
+        name,
+        telegram
+      })
+    });
 
+    const data=await response.json();
+
+    if(!response.ok || !data.ok){
+      throw new Error(data.error || data.detail || "Не удалось отправить заказ");
+    }
+
+    const orders=JSON.parse(localStorage.getItem("shop_orders")||"[]");
+
+    orders.push({
+      ...selectedOrder,
+      name,
+      telegram,
+      date:new Date().toLocaleString("ru-RU")
+    });
+
+    localStorage.setItem("shop_orders",JSON.stringify(orders));
+
+    alert("Заказ отправлен! Скоро с тобой свяжутся.");
+    closeOrder();
+
+    document.getElementById("customerName").value="";
+    document.getElementById("customerTelegram").value="";
+
+  }catch(error){
+    alert("Ошибка: "+error.message);
+  }finally{
+    button.disabled=false;
+    button.textContent=oldText;
+  }
 }
 
+/* =========================================================
+   BUILDER DATA
+========================================================= */
 
-const o={
+const DEFAULT_DESIGN=[
+  {
+    id:"hero-1",
+    type:"hero",
+    content:{
+      title:"Игры. Быстро. Выгодно.",
+      text:"Пополнение игр, игровые валюты и пропуски."
+    },
+    style:{
+      background:"#17181d",
+      color:"#ffffff",
+      radius:0,
+      padding:80,
+      align:"left"
+    }
+  },
+  {
+    id:"heading-1",
+    type:"heading",
+    content:{
+      text:"Популярные товары"
+    },
+    style:{
+      color:"#17181d",
+      size:34,
+      align:"left",
+      padding:35
+    }
+  },
+  {
+    id:"text-1",
+    type:"text",
+    content:{
+      text:"Выбирай нужную игру и покупай игровую валюту или пропуск."
+    },
+    style:{
+      color:"#666a75",
+      size:16,
+      align:"left",
+      padding:35
+    }
+  },
+  {
+    id:"catalog-1",
+    type:"catalog",
+    locked:true,
+    content:{},
+    style:{
+      padding:35
+    }
+  }
+];
 
-id:Date.now(),
+let design=loadDesign();
+let selectedId=null;
+let draggedNewType=null;
+let draggedExistingId=null;
+let history=[];
+let future=[];
+let mobilePreview=false;
+let previewMode=false;
 
-date:new Date().toLocaleString("ru-RU"),
-
-game:selected.g,
-
-product:selected.p,
-
-price:selected.price,
-
-name,
-
-telegram:tg
-
-};
-
-
-const submitButton=
-document.querySelector(".submit");
-
-if(submitButton){
-
-submitButton.disabled=true;
-submitButton.textContent="Отправка...";
-
+function loadDesign(){
+  try{
+    const saved=localStorage.getItem("bott_site_design");
+    return saved ? JSON.parse(saved) : structuredClone(DEFAULT_DESIGN);
+  }catch{
+    return structuredClone(DEFAULT_DESIGN);
+  }
 }
 
+function cloneDesign(){
+  return JSON.parse(JSON.stringify(design));
+}
 
-try{
+function pushHistory(){
+  history.push(cloneDesign());
 
-const response=await fetch("/api/order",{
+  if(history.length>30){
+    history.shift();
+  }
 
-method:"POST",
+  future=[];
+}
 
-headers:{
-"Content-Type":"application/json"
-},
+function undo(){
+  if(!history.length) return;
 
-body:JSON.stringify(o)
+  future.push(cloneDesign());
+  design=history.pop();
 
+  selectedId=null;
+  renderBuilder();
+  showToast("Отменено");
+}
+
+function redo(){
+  if(!future.length) return;
+
+  history.push(cloneDesign());
+  design=future.pop();
+
+  selectedId=null;
+  renderBuilder();
+  showToast("Повторено");
+}
+
+function saveBuilder(){
+  localStorage.setItem("bott_site_design",JSON.stringify(design));
+  showToast("Дизайн сохранён");
+}
+
+function showToast(text){
+  const el=document.getElementById("toast");
+  el.textContent=text;
+  el.classList.add("show");
+
+  clearTimeout(showToast.timer);
+
+  showToast.timer=setTimeout(()=>{
+    el.classList.remove("show");
+  },1800);
+}
+
+/* =========================================================
+   BUILDER RENDER
+========================================================= */
+
+function renderBuilder(){
+  const canvas=document.getElementById("builderCanvas");
+
+  canvas.innerHTML="";
+
+  design.forEach((block,index)=>{
+    const el=renderBlock(block,index);
+
+    canvas.appendChild(el);
+
+    if(index<design.length-1){
+      const drop=document.createElement("div");
+      drop.className="canvas-drop";
+      drop.dataset.drop=index+1;
+
+      drop.addEventListener("dragover",e=>{
+        e.preventDefault();
+        drop.classList.add("active");
+      });
+
+      drop.addEventListener("dragleave",()=>{
+        drop.classList.remove("active");
+      });
+
+      drop.addEventListener("drop",e=>{
+        e.preventDefault();
+        drop.classList.remove("active");
+        handleDrop(index+1);
+      });
+
+      canvas.appendChild(drop);
+    }
+  });
+
+  const endDrop=document.createElement("div");
+  endDrop.className="canvas-drop";
+  endDrop.dataset.drop=design.length;
+
+  endDrop.addEventListener("dragover",e=>{
+    e.preventDefault();
+    endDrop.classList.add("active");
+  });
+
+  endDrop.addEventListener("dragleave",()=>{
+    endDrop.classList.remove("active");
+  });
+
+  endDrop.addEventListener("drop",e=>{
+    e.preventDefault();
+    endDrop.classList.remove("active");
+    handleDrop(design.length);
+  });
+
+  canvas.appendChild(endDrop);
+
+  renderProperties();
+}
+
+function renderBlock(block,index){
+  const el=document.createElement("div");
+
+  el.className="builder-block "+(selectedId===block.id?"selected":"");
+  el.dataset.id=block.id;
+  el.draggable=!block.locked;
+
+  const toolbar=document.createElement("div");
+  toolbar.className="block-toolbar";
+
+  const up=document.createElement("button");
+  up.textContent="↑";
+  up.onclick=e=>{
+    e.stopPropagation();
+    moveBlock(block.id,-1);
+  };
+
+  const down=document.createElement("button");
+  down.textContent="↓";
+  down.onclick=e=>{
+    e.stopPropagation();
+    moveBlock(block.id,1);
+  };
+
+  const duplicate=document.createElement("button");
+  duplicate.textContent="⧉";
+  duplicate.onclick=e=>{
+    e.stopPropagation();
+    duplicateBlock(block.id);
+  };
+
+  const del=document.createElement("button");
+  del.textContent="×";
+  del.onclick=e=>{
+    e.stopPropagation();
+    deleteBlock(block.id);
+  };
+
+  toolbar.append(up,down,duplicate);
+
+  if(!block.locked) toolbar.append(del);
+
+  el.appendChild(toolbar);
+
+  const content=document.createElement("div");
+  content.className="block-content";
+
+  renderBlockContent(content,block);
+
+  el.appendChild(content);
+
+  el.addEventListener("click",e=>{
+    if(e.target.closest("button")) return;
+
+    selectedId=block.id;
+    renderBuilder();
+  });
+
+  el.addEventListener("dragstart",()=>{
+    draggedExistingId=block.id;
+  });
+
+  el.addEventListener("dragend",()=>{
+    draggedExistingId=null;
+  });
+
+  return el;
+}
+
+function renderBlockContent(container,block){
+  const s=block.style||{};
+  const c=block.content||{};
+
+  if(block.type==="hero"){
+    container.className+=" b-hero";
+
+    container.style.background=s.background||"#17181d";
+    container.style.color=s.color||"#fff";
+    container.style.padding=(s.padding??80)+"px";
+    container.style.borderRadius=(s.radius??0)+"px";
+    container.style.textAlign=s.align||"left";
+
+    container.innerHTML=`
+      <h1>${escapeHtml(c.title||"Заголовок")}</h1>
+      <p>${escapeHtml(c.text||"Описание")}</p>
+    `;
+  }
+
+  if(block.type==="heading"){
+    container.className+=" b-heading";
+
+    container.style.padding=(s.padding??35)+"px";
+    container.style.color=s.color||"#17181d";
+    container.style.textAlign=s.align||"left";
+
+    container.innerHTML=`<h2 style="font-size:${s.size||34}px">${escapeHtml(c.text||"Заголовок")}</h2>`;
+  }
+
+  if(block.type==="text"){
+    container.className+=" b-text";
+
+    container.style.padding=(s.padding??35)+"px";
+    container.style.color=s.color||"#666a75";
+    container.style.fontSize=(s.size||16)+"px";
+    container.style.textAlign=s.align||"left";
+
+    container.innerHTML=escapeHtml(c.text||"Текст");
+  }
+
+  if(block.type==="button"){
+    container.className+=" b-button";
+    container.style.padding=(s.padding??25)+"px";
+    container.style.textAlign=s.align||"left";
+
+    container.innerHTML=`
+      <a href="${escapeAttribute(c.url||"#")}"
+         onclick="return false"
+         style="
+           background:${s.background||"var(--accent)"};
+           color:${s.color||"#fff"};
+           border-radius:${s.radius??12}px;
+           font-size:${s.size||16}px;
+         ">
+        ${escapeHtml(c.text||"Кнопка")}
+      </a>
+    `;
+  }
+
+  if(block.type==="image"){
+    container.className+=" b-image";
+    container.style.padding=(s.padding??25)+"px";
+
+    container.innerHTML=`
+      <img
+        src="${escapeAttribute(c.url||"https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80")}"
+        alt=""
+        onerror="this.style.display='none'"
+      >
+    `;
+  }
+
+  if(block.type==="banner"){
+    container.className+=" b-banner";
+    container.style.margin=(s.padding??25)+"px 45px";
+    container.style.background=s.background||"#f0efff";
+    container.style.color=s.color||"#302b64";
+
+    container.textContent=c.text||"🔥 Специальное предложение!";
+  }
+
+  if(block.type==="spacer"){
+    container.className+=" b-spacer";
+    container.style.height=(s.height||80)+"px";
+  }
+
+  if(block.type==="catalog"){
+    container.className+=" b-catalog";
+
+    container.style.padding=(s.padding??35)+"px";
+
+    container.innerHTML=`
+      <div class="b-catalog-head">
+        <h2>Каталог</h2>
+        <span style="color:#888;font-size:13px">Рабочий блок</span>
+      </div>
+
+      <div class="b-catalog-grid">
+        ${catalog[currentGame].slice(0,6).map(([name,price])=>`
+          <div class="b-mini-product">
+            <strong>${escapeHtml(name)}</strong>
+            <div class="b-mini-price">${price.toLocaleString("ru-RU")} ₽</div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+}
+
+/* =========================================================
+   PROPERTIES
+========================================================= */
+
+function renderProperties(){
+  const box=document.getElementById("properties");
+
+  if(!selectedId){
+    box.innerHTML=`
+      <div class="property-empty">
+        <div style="font-size:35px;margin-bottom:10px">🎨</div>
+        <strong>Выбери блок</strong>
+        <div style="margin-top:6px">
+          Нажми на любой элемент в центре,
+          чтобы изменить его содержимое и дизайн.
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const block=design.find(x=>x.id===selectedId);
+
+  if(!block){
+    selectedId=null;
+    renderProperties();
+    return;
+  }
+
+  const c=block.content||{};
+  const s=block.style||{};
+
+  box.innerHTML=`
+    <div class="property-content">
+
+      <div class="panel-title">Настройки блока</div>
+
+      <div class="prop-section">
+        <div class="prop-title">Тип</div>
+        <div style="
+          padding:10px;
+          background:#f5f5f8;
+          border-radius:9px;
+          font-weight:700;
+          text-transform:capitalize">
+          ${block.type}
+          ${block.locked?" · 🔒":" "}
+        </div>
+      </div>
+
+      ${propertiesForType(block,c,s)}
+
+      <div class="prop-section">
+        <div class="prop-title">Выравнивание</div>
+
+        <select class="prop-select" onchange="updateStyle('align',this.value)">
+          <option value="left" ${s.align==="left"?"selected":""}>Слева</option>
+          <option value="center" ${s.align==="center"?"selected":""}>По центру</option>
+          <option value="right" ${s.align==="right"?"selected":""}>Справа</option>
+        </select>
+      </div>
+
+      <div class="prop-section">
+        <div class="prop-title">Скругление</div>
+
+        <div class="range-row">
+          <input type="range" min="0" max="50"
+            value="${s.radius??0}"
+            oninput="updateStyle('radius',Number(this.value))">
+          <input class="prop-input" value="${s.radius??0}"
+            onchange="updateStyle('radius',Number(this.value))">
+        </div>
+      </div>
+
+      ${!block.locked ? `
+        <div class="prop-section">
+          <button class="danger" onclick="deleteBlock('${block.id}')">
+            🗑 Удалить блок
+          </button>
+        </div>
+      `:""}
+
+    </div>
+  `;
+}
+
+function propertiesForType(block,c,s){
+  let html="";
+
+  if(block.type==="hero"){
+    html+=`
+      <div class="prop-section">
+        <div class="prop-title">Заголовок</div>
+        <textarea class="prop-input prop-textarea"
+          oninput="updateContent('title',this.value)"
+        >${escapeHtml(c.title||"")}</textarea>
+      </div>
+
+      <div class="prop-section">
+        <div class="prop-title">Описание</div>
+        <textarea class="prop-input prop-textarea"
+          oninput="updateContent('text',this.value)"
+        >${escapeHtml(c.text||"")}</textarea>
+      </div>
+
+      ${colorControl("Фон","background",s.background||"#17181d")}
+      ${colorControl("Текст","color",s.color||"#ffffff")}
+
+      ${rangeControl("Отступ","padding",s.padding??80,20,140)}
+    `;
+  }
+
+  if(block.type==="heading"){
+    html+=`
+      <div class="prop-section">
+        <div class="prop-title">Текст</div>
+        <textarea class="prop-input prop-textarea"
+          oninput="updateContent('text',this.value)"
+        >${escapeHtml(c.text||"")}</textarea>
+      </div>
+
+      ${colorControl("Цвет","color",s.color||"#17181d")}
+
+      ${rangeControl("Размер","size",s.size??34,16,80)}
+      ${rangeControl("Отступ","padding",s.padding??35,5,100)}
+    `;
+  }
+
+  if(block.type==="text"){
+    html+=`
+      <div class="prop-section">
+        <div class="prop-title">Текст</div>
+        <textarea class="prop-input prop-textarea"
+          oninput="updateContent('text',this.value)"
+        >${escapeHtml(c.text||"")}</textarea>
+      </div>
+
+      ${colorControl("Цвет","color",s.color||"#666a75")}
+
+      ${rangeControl("Размер","size",s.size??16,10,32)}
+      ${rangeControl("Отступ","padding",s.padding??35,5,100)}
+    `;
+  }
+
+  if(block.type==="button"){
+    html+=`
+      <div class="prop-section">
+        <div class="prop-title">Текст кнопки</div>
+        <input class="prop-input"
+          value="${escapeAttribute(c.text||"")}"
+          oninput="updateContent('text',this.value)">
+      </div>
+
+      <div class="prop-section">
+        <div class="prop-title">Ссылка</div>
+        <input class="prop-input"
+          value="${escapeAttribute(c.url||"#")}"
+          oninput="updateContent('url',this.value)">
+      </div>
+
+      ${colorControl("Фон","background",s.background||"#6c5ce7")}
+      ${colorControl("Текст","color",s.color||"#fff")}
+
+      ${rangeControl("Размер текста","size",s.size??16,10,28)}
+      ${rangeControl("Отступ","padding",s.padding??25,5,80)}
+    `;
+  }
+
+  if(block.type==="image"){
+    html+=`
+      <div class="prop-section">
+        <div class="prop-title">URL изображения</div>
+        <input class="prop-input"
+          placeholder="https://..."
+          value="${escapeAttribute(c.url||"")}"
+          oninput="updateContent('url',this.value)">
+      </div>
+
+      ${rangeControl("Отступ","padding",s.padding??25,0,80)}
+    `;
+  }
+
+  if(block.type==="banner"){
+    html+=`
+      <div class="prop-section">
+        <div class="prop-title">Текст баннера</div>
+        <textarea class="prop-input prop-textarea"
+          oninput="updateContent('text',this.value)"
+        >${escapeHtml(c.text||"")}</textarea>
+      </div>
+
+      ${colorControl("Фон","background",s.background||"#f0efff")}
+      ${colorControl("Текст","color",s.color||"#302b64")}
+    `;
+  }
+
+  if(block.type==="spacer"){
+    html+=rangeControl("Высота","height",s.height??80,10,300);
+  }
+
+  if(block.type==="catalog"){
+    html+=`
+      <div class="prop-section">
+        <div style="
+          background:#f5f5f8;
+          border-radius:10px;
+          padding:12px;
+          font-size:13px;
+          line-height:1.5">
+          🔒 Каталог защищён от случайного удаления.
+          <br><br>
+          Товары, цены и оформление заказов работают через основной магазин.
+        </div>
+      </div>
+
+      ${rangeControl("Отступ","padding",s.padding??35,5,100)}
+    `;
+  }
+
+  return html;
+}
+
+function colorControl(label,key,value){
+  return `
+    <div class="prop-section">
+      <div class="prop-title">${label}</div>
+
+      <div class="color-row">
+        <input type="color"
+          value="${value}"
+          oninput="updateStyle('${key}',this.value)">
+        <input class="prop-input"
+          value="${value}"
+          oninput="updateStyle('${key}',this.value)">
+      </div>
+    </div>
+  `;
+}
+
+function rangeControl(label,key,value,min,max){
+  return `
+    <div class="prop-section">
+      <div class="prop-title">${label}</div>
+
+      <div class="range-row">
+        <input type="range"
+          min="${min}"
+          max="${max}"
+          value="${value}"
+          oninput="updateStyle('${key}',Number(this.value))">
+
+        <input class="prop-input"
+          value="${value}"
+          onchange="updateStyle('${key}',Number(this.value))">
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   EDITING
+========================================================= */
+
+function updateContent(key,value){
+  const block=design.find(x=>x.id===selectedId);
+  if(!block)return;
+
+  if(!block.content)block.content={};
+
+  block.content[key]=value;
+
+  renderBuilder();
+}
+
+function updateStyle(key,value){
+  const block=design.find(x=>x.id===selectedId);
+  if(!block)return;
+
+  if(!block.style)block.style={};
+
+  block.style[key]=value;
+
+  renderBuilder();
+}
+
+function moveBlock(id,direction){
+  const index=design.findIndex(x=>x.id===id);
+
+  if(index<0)return;
+
+  const newIndex=index+direction;
+
+  if(newIndex<0 || newIndex>=design.length)return;
+
+  if(design[index].locked)return;
+
+  pushHistory();
+
+  [design[index],design[newIndex]]=[
+    design[newIndex],
+    design[index]
+  ];
+
+  renderBuilder();
+}
+
+function duplicateBlock(id){
+  const index=design.findIndex(x=>x.id===id);
+  if(index<0)return;
+
+  const original=design[index];
+
+  if(original.locked){
+    showToast("Этот блок нельзя дублировать");
+    return;
+  }
+
+  pushHistory();
+
+  const copy=JSON.parse(JSON.stringify(original));
+
+  copy.id=original.type+"-"+Date.now();
+
+  design.splice(index+1,0,copy);
+
+  selectedId=copy.id;
+
+  renderBuilder();
+}
+
+function deleteBlock(id){
+  const index=design.findIndex(x=>x.id===id);
+
+  if(index<0)return;
+
+  if(design[index].locked){
+    showToast("Этот блок защищён");
+    return;
+  }
+
+  pushHistory();
+
+  design.splice(index,1);
+
+  selectedId=null;
+
+  renderBuilder();
+}
+
+function createBlock(type){
+  const id=type+"-"+Date.now();
+
+  const base={
+    id,
+    type,
+    content:{},
+    style:{}
+  };
+
+  if(type==="hero"){
+    base.content={
+      title:"Новый заголовок",
+      text:"Добавь описание своего предложения."
+    };
+    base.style={
+      background:"#17181d",
+      color:"#fff",
+      padding:80,
+      radius:0,
+      align:"left"
+    };
+  }
+
+  if(type==="heading"){
+    base.content={text:"Новый заголовок"};
+    base.style={
+      color:"#17181d",
+      size:34,
+      padding:35,
+      align:"left"
+    };
+  }
+
+  if(type==="text"){
+    base.content={text:"Новый текстовый блок."};
+    base.style={
+      color:"#666a75",
+      size:16,
+      padding:35,
+      align:"left"
+    };
+  }
+
+  if(type==="button"){
+    base.content={
+      text:"Подробнее",
+      url:"#"
+    };
+    base.style={
+      background:"#6c5ce7",
+      color:"#fff",
+      size:16,
+      padding:25,
+      radius:12,
+      align:"left"
+    };
+  }
+
+  if(type==="image"){
+    base.content={
+      url:"https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80"
+    };
+    base.style={
+      padding:25
+    };
+  }
+
+  if(type==="banner"){
+    base.content={
+      text:"🔥 Специальное предложение!"
+    };
+    base.style={
+      background:"#f0efff",
+      color:"#302b64",
+      padding:25
+    };
+  }
+
+  if(type==="spacer"){
+    base.style={
+      height:80
+    };
+  }
+
+  return base;
+}
+
+function handleDrop(index){
+  if(draggedNewType){
+    pushHistory();
+
+    const block=createBlock(draggedNewType);
+
+    design.splice(index,0,block);
+
+    selectedId=block.id;
+
+    draggedNewType=null;
+
+    renderBuilder();
+
+    return;
+  }
+
+  if(draggedExistingId){
+    const oldIndex=design.findIndex(x=>x.id===draggedExistingId);
+
+    if(oldIndex<0)return;
+    if(design[oldIndex].locked)return;
+
+    pushHistory();
+
+    const [block]=design.splice(oldIndex,1);
+
+    if(oldIndex<index)index--;
+
+    design.splice(index,0,block);
+
+    selectedId=block.id;
+
+    draggedExistingId=null;
+
+    renderBuilder();
+  }
+}
+
+/* =========================================================
+   DRAG FROM LEFT
+========================================================= */
+
+document.querySelectorAll(".block-item").forEach(item=>{
+  item.addEventListener("dragstart",()=>{
+    draggedNewType=item.dataset.new;
+  });
+
+  item.addEventListener("dragend",()=>{
+    draggedNewType=null;
+  });
 });
 
+/* =========================================================
+   BUILDER OPEN/CLOSE
+========================================================= */
 
-let result;
+function openBuilder(){
+  document.getElementById("builder").classList.add("open");
 
-try{
+  document.body.style.overflow="hidden";
 
-result=await response.json();
+  design=loadDesign();
+  selectedId=null;
+  previewMode=false;
 
-}catch(error){
+  document.getElementById("builder").classList.remove("preview-mode");
 
-result={
-ok:false,
-error:"Сервер вернул неправильный ответ"
-};
-
+  renderBuilder();
 }
 
-
-if(!response.ok||!result.ok){
-
-alert(
-"Не удалось отправить заказ.\n\n"+
-(result.error||"Неизвестная ошибка")+
-(result.detail?"\n\n"+result.detail:"")
-);
-
-if(submitButton){
-
-submitButton.disabled=false;
-submitButton.textContent="Оформить заказ";
-
+function closeBuilder(){
+  document.getElementById("builder").classList.remove("open");
+  document.body.style.overflow="";
 }
 
-return;
+function toggleDevice(){
+  mobilePreview=!mobilePreview;
 
+  document.getElementById("canvasWrap")
+    .classList.toggle("mobile",mobilePreview);
+
+  document.getElementById("deviceText").textContent=
+    mobilePreview?"Телефон":"ПК";
 }
 
+function togglePreview(){
+  previewMode=!previewMode;
 
-const orders=
-JSON.parse(
-localStorage.getItem("shop_orders")||"[]"
-);
-
-orders.unshift(o);
-
-localStorage.setItem(
-"shop_orders",
-JSON.stringify(orders)
-);
-
-
-document.getElementById("box").innerHTML=`
-
-<div class="success">
-
-<div class="check">✓</div>
-
-<h2>Заказ оформлен!</h2>
-
-<p>
-Наш менеджер скоро свяжется с вами.
-</p>
-
-<button
-class="ok"
-onclick="closeModal()"
->
-Готово
-</button>
-
-</div>
-
-`;
-
-
-if(
-window.Telegram&&
-Telegram.WebApp
-){
-
-try{
-
-if(Telegram.WebApp.HapticFeedback){
-
-Telegram.WebApp.HapticFeedback
-.notificationOccurred("success");
-
+  document.getElementById("builder")
+    .classList.toggle("preview-mode",previewMode);
 }
 
-}catch(err){}
-
-}
-
-
-}catch(error){
-
-console.error(error);
-
-alert(
-"Не удалось отправить заказ.\n\n"+
-"Проверьте подключение и попробуйте ещё раз."
-);
-
-if(submitButton){
-
-submitButton.disabled=false;
-submitButton.textContent="Оформить заказ";
-
-}
-
-}
-
-}
-
-
-function closeModal(){
-
-modal.classList.remove("show");
-
-}
-
-
-modal.onclick=e=>{
-
-if(e.target===modal){
-
-closeModal();
-
-}
-
-};
-
-
-document.getElementById("cart").onclick=()=>{
-
-if(selected){
-
-order(
-selected.g,
-selected.p,
-selected.price
-);
-
-}else{
-
-document.querySelector(".buy")?.click();
-
-}
-
-};
-
-
-/* =========================
-   АДМИНКА
-========================= */
-
-function esc(v){
-
-return String(v)
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;")
-.replaceAll('"',"&quot;")
-.replaceAll("'","&#039;");
-
-}
-
-
-function showOrders(){
-
-const a=
-JSON.parse(
-localStorage.getItem("shop_orders")||"[]"
-);
-
-const l=
-document.getElementById("ordersList");
-
-
-l.innerHTML=a.length
-
-?a.map(o=>`
-
-<div class="order-item">
-
-<strong>
-${esc(o.game)} — ${esc(o.product)}
-</strong>
-
-<span>💰 ${money(o.price)}</span>
-<span>👤 ${esc(o.name)}</span>
-<span>💬 ${esc(o.telegram)}</span>
-<span>🕒 ${esc(o.date)}</span>
-
-</div>
-
-`).join("")
-
-:`
-
-<div class="empty-orders">
-Заявок пока нет.
-</div>
-
-`;
-
-document
-.getElementById("adminModal")
-.classList.add("show");
-
-}
-
-
-let clicks=0;
-let timer;
-
-
-document.getElementById("adminLogo").onclick=()=>{
-
-clicks++;
-
-clearTimeout(timer);
-
-if(clicks>=5){
-
-clicks=0;
-
-showOrders();
-
-}else{
-
-timer=setTimeout(
-()=>clicks=0,
-1200
-);
-
-}
-
-};
-
-
-document.getElementById("adminClose").onclick=()=>{
-
-document
-.getElementById("adminModal")
-.classList
-.remove("show");
-
-};
-
-
-document.getElementById("refreshOrders").onclick=
-showOrders;
-
-
-document.getElementById("clearOrders").onclick=()=>{
-
-if(confirm("Удалить все заявки на этом устройстве?")){
-
-localStorage.removeItem("shop_orders");
-
-showOrders();
-
-}
-
-};
-
-
-document.getElementById("adminModal").onclick=e=>{
-
-if(e.target.id==="adminModal"){
-
-e.currentTarget.classList.remove("show");
-
-}
-
-};
-
-
-/* =========================
-   КОНСТРУКТОР
-========================= */
-
-let editorSelected=null;
-
-let design=
-JSON.parse(
-localStorage.getItem("bot_t_design")||"null"
-)||{
-blocks:[],
-styles:{
-bg:"#f4f6f9",
-text:"#202633",
-accent:"#3478f6",
-radius:"15"
-}
-};
-
-
-function openEditor(){
-
-document.getElementById("editor").classList.add("show");
-
-renderEditor();
-
-}
-
-
-function closeEditor(){
-
-document.getElementById("editor").classList.remove("show");
-
-}
-
-
-function renderEditor(){
-
-const page=document.getElementById("editorPage");
-
-const hero=document.querySelector(".hero").cloneNode(true);
-const tab=document.querySelector(".tabs").cloneNode(true);
-const catalog=document.querySelector("#catalog").cloneNode(true);
-
-hero.removeAttribute("data-editor-id");
-tab.removeAttribute("data-editor-id");
-catalog.removeAttribute("data-editor-id");
-
-document.getElementById("editorHero").innerHTML="";
-document.getElementById("editorTabs").innerHTML="";
-document.getElementById("editorCatalog").innerHTML="";
-
-document.getElementById("editorHero").appendChild(hero);
-document.getElementById("editorTabs").appendChild(tab);
-document.getElementById("editorCatalog").appendChild(catalog);
-
-
-document.getElementById("editorHero").onclick=
-()=>selectEditorElement("hero");
-
-document.getElementById("editorTabs").onclick=
-e=>{
-e.stopPropagation();
-selectEditorElement("tabs");
-};
-
-document.getElementById("editorCatalog").onclick=
-e=>{
-e.stopPropagation();
-selectEditorElement("catalog");
-};
-
-
-applyDesign();
-
-
-renderCustomBlocks();
-
-}
-
-
-function selectEditorElement(id){
-
-editorSelected=id;
-
-document
-.querySelectorAll(".editor-element")
-.forEach(x=>x.classList.remove("selected"));
-
-
-const props=document.getElementById("properties");
-
-
-if(id==="hero"){
-
-props.innerHTML=`
-
-<div class="property">
-
-<label>Заголовок</label>
-
-<input
-id="propHeroTitle"
-value="${esc(document.querySelector(".hero h1").innerText)}"
-oninput="updateHero()"
->
-
-</div>
-
-<div class="property">
-
-<label>Описание</label>
-
-<textarea
-id="propHeroText"
-oninput="updateHero()"
->${esc(document.querySelector(".hero p").innerText)}</textarea>
-
-</div>
-
-<div class="property">
-
-<label>Фон</label>
-
-<input
-type="color"
-id="propHeroBg"
-value="#172033"
-oninput="updateHeroStyle()"
->
-
-</div>
-
-<div class="property">
-
-<label>Скругление</label>
-
-<input
-type="number"
-id="propRadius"
-value="${design.styles.radius}"
-oninput="updateGlobalStyle()"
->
-
-</div>
-
-`;
-
-}
-
-
-else if(id==="tabs"){
-
-props.innerHTML=`
-
-<div class="property">
-
-<label>Цвет кнопок</label>
-
-<input
-type="color"
-value="${design.styles.accent}"
-oninput="design.styles.accent=this.value;applyDesign()"
->
-
-</div>
-
-<div class="property">
-
-<label>Скругление</label>
-
-<input
-type="number"
-value="${design.styles.radius}"
-oninput="design.styles.radius=this.value;applyDesign()"
->
-
-</div>
-
-<p style="font-size:12px;color:#7c8595">
-Категории товаров генерируются автоматически.
-</p>
-
-`;
-
-}
-
-
-else if(id==="catalog"){
-
-props.innerHTML=`
-
-<div class="property">
-
-<label>Цвет фона страницы</label>
-
-<input
-type="color"
-value="${design.styles.bg}"
-oninput="design.styles.bg=this.value;applyDesign()"
->
-
-</div>
-
-<div class="property">
-
-<label>Цвет текста</label>
-
-<input
-type="color"
-value="${design.styles.text}"
-oninput="design.styles.text=this.value;applyDesign()"
->
-
-</div>
-
-<div class="property">
-
-<label>Цвет кнопок</label>
-
-<input
-type="color"
-value="${design.styles.accent}"
-oninput="design.styles.accent=this.value;applyDesign()"
->
-
-</div>
-
-<div class="property">
-
-<label>Скругление карточек</label>
-
-<input
-type="number"
-value="${design.styles.radius}"
-oninput="design.styles.radius=this.value;applyDesign()"
->
-
-</div>
-
-`;
-
-}
-
-}
-
-
-function updateHero(){
-
-const title=
-document.getElementById("propHeroTitle").value;
-
-const text=
-document.getElementById("propHeroText").value;
-
-
-const h=
-document.querySelector(".hero h1");
-
-const p=
-document.querySelector(".hero p");
-
-
-h.innerText=title;
-p.innerText=text;
-
-renderEditor();
-
-selectEditorElement("hero");
-
-}
-
-
-function updateHeroStyle(){
-
-const color=
-document.getElementById("propHeroBg").value;
-
-document.querySelector(".hero").style.background=
-`linear-gradient(135deg,${color},#2c3c60)`;
-
-}
-
-
-function updateGlobalStyle(){
-
-design.styles.radius=
-document.getElementById("propRadius").value;
-
-applyDesign();
-
-}
-
-
-function applyDesign(){
-
-document.documentElement.style.setProperty(
-"--accent",
-design.styles.accent
-);
-
-document.documentElement.style.setProperty(
-"--bg",
-design.styles.bg
-);
-
-document.documentElement.style.setProperty(
-"--text",
-design.styles.text
-);
-
-document.documentElement.style.setProperty(
-"--radius",
-design.styles.radius+"px"
-);
-
-}
-
-
-function addBlock(type){
-
-const id=
-"custom_"+Date.now();
-
-let html="";
-
-
-if(type==="text"){
-
-html=`
-
-<div
-class="custom-block"
-contenteditable="true"
->
-Новый текст
-</div>
-
-`;
-
-}
-
-
-if(type==="title"){
-
-html=`
-
-<div
-class="custom-block"
-contenteditable="true"
-style="font-size:28px;font-weight:900;color:#202633"
->
-Новый заголовок
-</div>
-
-`;
-
-}
-
-
-if(type==="button"){
-
-html=`
-
-<div class="custom-block">
-
-<button
-style="
-border:0;
-border-radius:10px;
-padding:12px 22px;
-background:var(--accent);
-color:white;
-font-weight:800;
-cursor:pointer;
-"
->
-Новая кнопка
-</button>
-
-</div>
-
-`;
-
-}
-
-
-if(type==="image"){
-
-html=`
-
-<div class="custom-block">
-
-<input
-type="text"
-placeholder="Вставьте URL картинки"
-style="
-width:100%;
-padding:10px;
-border:1px solid #ddd;
-border-radius:8px;
-"
-onchange="
-this.parentElement.querySelector('img').src=this.value
-"
->
-
-<br><br>
-
-<img
-src="https://placehold.co/600x200?text=Ваше+изображение"
-style="
-max-width:100%;
-border-radius:12px;
-"
->
-
-</div>
-
-`;
-
-}
-
-
-if(type==="space"){
-
-html=`
-
-<div
-class="custom-block"
-style="height:80px"
->
-↕ Отступ
-</div>
-
-`;
-
-}
-
-
-design.blocks.push({
-id,
-type,
-html
+/* =========================================================
+   LOGO SECRET ACCESS
+   5 CLICKS
+========================================================= */
+
+let logoClicks=0;
+let logoTimer=null;
+
+document.getElementById("logo").addEventListener("click",()=>{
+  logoClicks++;
+
+  clearTimeout(logoTimer);
+
+  logoTimer=setTimeout(()=>{
+    logoClicks=0;
+  },1200);
+
+  if(logoClicks>=5){
+    logoClicks=0;
+    openBuilder();
+  }
 });
 
-saveDesign();
+/* =========================================================
+   HELPERS
+========================================================= */
 
-renderCustomBlocks();
-
+function escapeHtml(value){
+  return String(value??"")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
-
-function renderCustomBlocks(){
-
-const box=
-document.getElementById("editorCustom");
-
-box.innerHTML="";
-
-
-design.blocks.forEach((block,index)=>{
-
-const wrapper=
-document.createElement("div");
-
-wrapper.className=
-"editor-element";
-
-wrapper.dataset.customId=
-block.id;
-
-wrapper.innerHTML=`
-
-<div class="drag-handle">
-↕ Перетащить
-</div>
-
-${block.html}
-
-`;
-
-wrapper.onclick=e=>{
-
-e.stopPropagation();
-
-selectCustomBlock(block.id);
-
-};
-
-
-box.appendChild(wrapper);
-
-});
-
+function escapeAttribute(value){
+  return escapeHtml(value);
 }
 
-
-function selectCustomBlock(id){
-
-editorSelected=id;
-
-const block=
-design.blocks.find(x=>x.id===id);
-
-if(!block)return;
-
-
-document.getElementById("properties").innerHTML=`
-
-<div class="property">
-
-<label>Тип блока</label>
-
-<input
-value="${block.type}"
-disabled
->
-
-</div>
-
-<div class="property">
-
-<label>HTML содержимое</label>
-
-<textarea
-id="customHtml"
-oninput="updateCustomHtml('${id}')"
->${esc(block.html)}</textarea>
-
-</div>
-
-<button
-class="delete-element"
-onclick="deleteCustomBlock('${id}')"
->
-Удалить блок
-</button>
-
-`;
-
-}
-
-
-function updateCustomHtml(id){
-
-const block=
-design.blocks.find(x=>x.id===id);
-
-if(!block)return;
-
-block.html=
-document.getElementById("customHtml").value;
-
-renderCustomBlocks();
-
-}
-
-
-function deleteCustomBlock(id){
-
-design.blocks=
-design.blocks.filter(x=>x.id!==id);
-
-editorSelected=null;
-
-renderCustomBlocks();
-
-document.getElementById("properties").innerHTML=`
-<div style="color:#7c8595;font-size:13px">
-Выберите элемент на странице.
-</div>
-`;
-
-}
-
-
-function saveDesign(){
-
-localStorage.setItem(
-"bot_t_design",
-JSON.stringify(design)
-);
-
-applyDesign();
-
-alert("Дизайн сохранён!");
-
-}
-
-
-function loadSavedDesign(){
-
-const saved=
-JSON.parse(
-localStorage.getItem("bot_t_design")||"null"
-);
-
-if(saved){
-
-design=saved;
-
-applyDesign();
-
-}
-
-}
-
-
-/* =========================
-   ПЕРЕТАСКИВАНИЕ БЛОКОВ
-========================= */
-
-let dragged=null;
-
-
-document.addEventListener("dragstart",e=>{
-
-const el=
-e.target.closest(".editor-element");
-
-if(!el)return;
-
-dragged=el;
-
-});
-
-
-document.addEventListener("dragover",e=>{
-
-if(!dragged)return;
-
-const target=
-e.target.closest(".editor-element");
-
-if(!target||target===dragged)return;
-
-e.preventDefault();
-
-const rect=
-target.getBoundingClientRect();
-
-const before=
-e.clientY<rect.top+rect.height/2;
-
-if(before){
-
-target.parentNode.insertBefore(
-dragged,
-target
-);
-
-}else{
-
-target.parentNode.insertBefore(
-dragged,
-target.nextSibling
-);
-
-}
-
-});
-
-
-document.addEventListener("dragend",()=>{
-
-dragged=null;
-
-});
-
-
-function makeDraggable(){
-
-document
-.querySelectorAll("#editor .editor-element")
-.forEach(el=>{
-
-el.draggable=true;
-
-});
-
-}
-
-
-/* =========================
-   ЛОГОТИП
-========================= */
-
-let adminClicks=0;
-let adminTimer;
-
-
-document.getElementById("adminLogo").addEventListener(
-"click",
-()=>{
-
-adminClicks++;
-
-clearTimeout(adminTimer);
-
-
-if(adminClicks>=5){
-
-adminClicks=0;
-
-openEditor();
-
-}else{
-
-adminTimer=
-setTimeout(
-()=>adminClicks=0,
-1200
-);
-
-}
-
-}
-);
-
-
-/* =========================
-   ЗАПУСК
-========================= */
-
-render();
-
-loadSavedDesign();
-
+/* =========================================================
+   START
+========================================================= */
+
+renderTabs();
+renderProducts();
 </script>
 
 </body>

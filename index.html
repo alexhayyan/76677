@@ -17,7 +17,85 @@ let filter="Все",selected=null;const tabs=document.getElementById("tabs"),cat
 function render(){tabs.innerHTML=["Все",...data.map(x=>x.g)].map(x=>`<button class="tab ${x==filter?"active":""}" onclick="setFilter(${JSON.stringify(x)})">${x}</button>`).join("");const arr=filter=="Все"?data:data.filter(x=>x.g==filter);cat.innerHTML=arr.map(x=>`<section class="section"><h2 class="title">${x.i} ${x.g}</h2><div class="grid">${x.p.map(p=>`<article class="card"><div class="icon">${x.i}</div><h3>${p[0]}</h3><div class="desc">Моментальное оформление</div><div class="price">${money(p[1])}</div><button class="buy" onclick='order(${JSON.stringify(x.g)},${JSON.stringify(p[0])},${p[1]===null?"null":p[1]})'>Заказать</button></article>`).join("")}</div></section>`).join("")}
 function setFilter(x){filter=x;render();window.scrollTo({top:0,behavior:"smooth"})}
 function order(g,p,price){selected={g,p,price};modal.classList.add("show");document.getElementById("box").innerHTML=`<div class="top"><div><h2>Оформление заказа</h2><div class="selected">${g} • ${p} • ${money(price)}</div></div><button class="close" onclick="closeModal()">×</button></div><form id="form"><div class="field"><label>Ваше имя</label><input id="name" required placeholder="Иван"></div><div class="field"><label>Telegram</label><input id="tg" required placeholder="@username"></div><button class="submit">Оформить заказ</button></form>`;document.getElementById("form").onsubmit=submitOrder;setTimeout(()=>document.getElementById("name").focus(),50)}
-function submitOrder(e){e.preventDefault();const name=document.getElementById("name").value.trim(),tg=document.getElementById("tg").value.trim();if(!name||!tg)return;const o={id:Date.now(),date:new Date().toLocaleString("ru-RU"),game:selected.g,product:selected.p,price:selected.price,name,telegram:tg};const orders=JSON.parse(localStorage.getItem("shop_orders")||"[]");orders.unshift(o);localStorage.setItem("shop_orders",JSON.stringify(orders));document.getElementById("box").innerHTML=`<div class="success"><div class="check">✓</div><h2>Заказ оформлен!</h2><p>Наш менеджер скоро свяжется с вами.</p><button class="ok" onclick="closeModal()">Готово</button></div>`;if(window.Telegram&&Telegram.WebApp){try{Telegram.WebApp.HapticFeedback&&Telegram.WebApp.HapticFeedback.notificationOccurred("success")}catch(err){}}
+async function submitOrder(e){
+  e.preventDefault();
+
+  const name = document.getElementById("name").value.trim();
+  const tg = document.getElementById("tg").value.trim();
+
+  if(!name || !tg) return;
+
+  const o = {
+    id: Date.now(),
+    date: new Date().toLocaleString("ru-RU"),
+    game: selected.g,
+    product: selected.p,
+    price: selected.price,
+    name,
+    telegram: tg
+  };
+
+  try {
+    const response = await fetch("/api/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(o)
+    });
+
+    const result = await response.json();
+
+    console.log("Ответ сервера:", result);
+
+    if(!response.ok || !result.ok){
+      console.error("Ошибка отправки:", result);
+
+      alert(
+        "Не удалось отправить заказ.\n\n" +
+        (result.error || "Неизвестная ошибка")
+      );
+
+      return;
+    }
+
+    // Сохраняем заказ на устройстве только после успешной отправки
+    const orders = JSON.parse(
+      localStorage.getItem("shop_orders") || "[]"
+    );
+
+    orders.unshift(o);
+    localStorage.setItem(
+      "shop_orders",
+      JSON.stringify(orders)
+    );
+
+    document.getElementById("box").innerHTML = `
+      <div class="success">
+        <div class="check">✓</div>
+        <h2>Заказ оформлен!</h2>
+        <p>Наш менеджер скоро свяжется с вами.</p>
+        <button class="ok" onclick="closeModal()">Готово</button>
+      </div>
+    `;
+
+    if(window.Telegram && Telegram.WebApp){
+      try{
+        Telegram.WebApp.HapticFeedback &&
+        Telegram.WebApp.HapticFeedback.notificationOccurred("success");
+      }catch(err){}
+    }
+
+  } catch(error) {
+
+    console.error("Ошибка соединения:", error);
+
+    alert(
+      "Не удалось отправить заказ.\n\n" +
+      "Проверьте подключение и попробуйте ещё раз."
+    );
+  }
+}if(!name||!tg)return;const o={id:Date.now(),date:new Date().toLocaleString("ru-RU"),game:selected.g,product:selected.p,price:selected.price,name,telegram:tg};const orders=JSON.parse(localStorage.getItem("shop_orders")||"[]");orders.unshift(o);localStorage.setItem("shop_orders",JSON.stringify(orders));document.getElementById("box").innerHTML=`<div class="success"><div class="check">✓</div><h2>Заказ оформлен!</h2><p>Наш менеджер скоро свяжется с вами.</p><button class="ok" onclick="closeModal()">Готово</button></div>`;if(window.Telegram&&Telegram.WebApp){try{Telegram.WebApp.HapticFeedback&&Telegram.WebApp.HapticFeedback.notificationOccurred("success")}catch(err){}}
 fetch("/api/order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(o)}).catch(()=>{});}
 function closeModal(){modal.classList.remove("show")}
 modal.onclick=e=>{if(e.target===modal)closeModal()};document.getElementById("cart").onclick=()=>{if(selected)order(selected.g,selected.p,selected.price);else document.querySelector(".buy")?.click()};
